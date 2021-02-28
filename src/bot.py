@@ -29,6 +29,7 @@ class Bot(commands.Bot):
         # Connect to NLU
         self.nlu = OfflineConnector(
             bot_api_url=config.BOT_API,
+            listener_host=config.BOT_CALLBACK_HOST,
             listener_port=config.BOT_CALLBACK_PORT
         )
 
