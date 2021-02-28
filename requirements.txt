@@ -4,4 +4,4 @@ discord.py==1.6.0
 pymongo==3.11.3
 dnspython==2.1.0
 aiohttp==3.7.4
-botbuilder-discord==0.4.0
+botbuilder-discord==0.5.0

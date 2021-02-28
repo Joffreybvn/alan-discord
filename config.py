@@ -17,6 +17,7 @@ class Config:
         # MS Bot Framework app
         self.BOT_API = environ.get('BOT_API')
         self.BOT_CALLBACK_PORT = int(environ.get('BOT_CALLBACK_PORT'))
+        self.BOT_CALLBACK_HOST = int(environ.get('BOT_CALLBACK_HOST'))
 
         # My BeCode URL
         self.MY_BECODE_URL = "https://my.becode.org"
