@@ -22,14 +22,10 @@ class Config:
         self.MY_BECODE_URL = "https://my.becode.org"
 
         # Channels where the bot listen to messages
-        self.CHANNEL_WHITELIST = [
-            815314932156858368
-        ]
+        self.CHANNEL_WHITELIST = environ.get('CHANNEL_WHITELIST').split(",")
 
         # Channels where the bot publish attendance
-        self.CHANNEL_ATTENDANCE = [
-            815314932156858368
-        ]
+        self.CHANNEL_ATTENDANCE = environ.get('CHANNEL_ATTENDANCE').split(",")
 
         self.ATTENDANCE_MESSAGES = AttendanceMessagesList()
 
