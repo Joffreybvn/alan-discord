@@ -25,11 +25,11 @@ class NotificationCog(commands.Cog):
         self.bot.history[context.message.id] = True
 
         # Update the database
-        author: str = context.message.author.mention
-        self.db.update({'_id': author}, send_notification=True)
+        mention: str = context.message.author.mention
+        self.db.update({'_id': mention}, send_notification=True)
 
         # Send a confirmation to user
-        await context.send(f"{author} You will now receive notifications for attendances, meetings and breaks.")
+        await context.send(f"{mention} You will now receive notifications for attendances, meetings and breaks.")
 
     @commands.command(name="stopalert", pass_context=True)
     async def remove_user_notification_list(self, context: Context):
@@ -43,8 +43,8 @@ class NotificationCog(commands.Cog):
         self.bot.history[context.message.id] = True
 
         # Update the database
-        author: str = context.message.author.mention
-        self.db.update({'_id': author}, send_notification=False)
+        mention: str = context.message.author.mention
+        self.db.update({'_id': mention}, send_notification=False)
 
         # Log and send a confirmation to user
-        await context.send(f"{author} You won't receive notifications anymore")
+        await context.send(f"{mention} You won't receive notifications anymore")

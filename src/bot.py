@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from discord import DMChannel
 from discord.ext import commands
 from discord.message import Message
 from botbuilder_discord import OfflineConnector
@@ -60,8 +61,9 @@ class Bot(commands.Bot):
         bot have access.
         """
 
-        # Consider message send only in whitelisted channels
-        if message.channel.id not in config.CHANNEL_WHITELIST:
+        # Consider message send only in whitelisted channels or in private message
+        if type(message.channel) != DMChannel \
+                and message.channel.id not in config.CHANNEL_WHITELIST:
             return
 
         # Don't respond to ourselves
@@ -77,7 +79,7 @@ class Bot(commands.Bot):
 
         # If the Cogs were not triggered, use NLP
         if not self.history[message.id]:
-            if self.user.mentioned_in(message):
+            if self.user.mentioned_in(message) or type(message.channel) == DMChannel:
 
                 # Trigger the NLP
                 responses = await self.nlu.send_message(message.author.id, message.content)

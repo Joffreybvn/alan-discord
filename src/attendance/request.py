@@ -3,8 +3,8 @@ import aiohttp
 
 from src.attendance.enums import Locations, Periods
 
-URL = "https://postman-echo.com/post"
-# URL = "https://graph.becode.org/"
+# URL = "https://postman-echo.com/post"
+URL = "https://graph.becode.org/"
 
 
 class AttendanceRequest:

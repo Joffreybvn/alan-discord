@@ -19,7 +19,7 @@ class Database:
         self.client = MongoClient(f"mongodb+srv://dbUser:{db_password}@{db_host}")
         self.db = self.client.discord_db
 
-    def create(self, user_id: int, send_notification: bool = False,
+    def create(self, user_id: str, send_notification: bool = False,
                becode_token: str = None, public_key: str = None,
                public_id: int = None) -> bool:
         """
@@ -100,7 +100,7 @@ class Database:
         # Return a list of all users' _id
         return [entry['_id'] for entry in list(notified)]
 
-    def get_token(self, user_id: int) -> Union[str, None]:
+    def get_token(self, user_id: str) -> Union[str, None]:
         """Return the token of a given user."""
 
         # Query the given user and get the token

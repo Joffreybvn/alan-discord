@@ -28,17 +28,17 @@ class AttendanceCog(commands.Cog):
         self.bot.history[context.message.id] = True
 
         # Get the author
-        author: str = context.message.author.mention
+        mention: str = context.message.author.mention
 
         # Check if the token is provided
         if len(token) > 1:
 
             # Update the database
-            self.db.update({'_id': author}, becode_token=token)
-            await context.send(f"{author}, your token has been added")
+            self.db.update({'_id': mention}, becode_token=token)
+            await context.send(f"{mention}, your token has been added")
 
         else:
-            await context.send(f"{author}, your token is not valid")
+            await context.send(f"{mention}, your token is not valid")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: Reaction, user: Union[User, Member]):
@@ -62,23 +62,22 @@ class AttendanceCog(commands.Cog):
             if location:
                 print("[!] User added reaction.")
 
-                # Get the mention and the author
+                # Get the mention
                 mention: str = user.mention
-                author: int = mention_to_id(mention)
 
                 # Retrieve the token and check if it's not None
-                if token := self.db.get_token(author):
+                if token := self.db.get_token(mention):
 
                     # Send an attendance request to Becode
                     if await AttendanceRequest(messages[reaction.message.id], location, token).send():
 
-                        print(f"[!] Attendance was correctly send for {author}.")
+                        print(f"[!] Attendance was correctly send for {mention}.")
                         await user.send(f"{mention} J'ai bien pointé pour toi sur Becode !")
 
                     else:
-                        print(f"[!] Attendance was NOT correctly send for {author}.")
+                        print(f"[!] Attendance was NOT correctly send for {mention}.")
                         await user.send(f"{mention} OUPS ! Une **erreur** s'est produite... Passe par https://my.becode.org pour pointer.")
 
                 else:
-                    print(f"[!] Missing token for {author}.")
+                    print(f"[!] Missing token for {mention}.")
                     await user.send(f"{mention} OUPS ! Une **erreur** s'est produite: Je n'ai pas trouvé ton token... Ajoute un token avec la commande **!token**.")
