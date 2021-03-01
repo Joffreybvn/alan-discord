@@ -5,7 +5,6 @@ from discord.ext import commands
 from discord.message import Message
 from botbuilder_discord import OfflineConnector
 
-# from . import Database
 from src.database import Database
 from .attendance.scheduler import Scheduler
 from .cogs import NotificationCog, AttendanceCog
@@ -26,7 +25,7 @@ class Bot(commands.Bot):
         self.history = defaultdict(lambda: False)
 
         # Start attendance scheduler
-        self.scheduler = Scheduler(self)
+        self.scheduler = Scheduler(self, database)
 
         # Connect to NLU
         self.nlu = OfflineConnector(

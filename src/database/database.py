@@ -41,10 +41,10 @@ class Database:
         """Return a list of all user to notify on attendance request."""
 
         # Query the database
-        users = User.many((Q.send_notification == True).to_dict())
+        users = User.many(Q.send_notification == True)
 
         # Return a list of all users' _id
-        return [user['_id'] for user in list(users)]
+        return [user['_id'] for user in users]
 
     @staticmethod
     def get_token(user_id: str) -> Union[None, str]:
