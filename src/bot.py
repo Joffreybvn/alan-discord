@@ -5,7 +5,8 @@ from discord.ext import commands
 from discord.message import Message
 from botbuilder_discord import OfflineConnector
 
-from . import Database
+# from . import Database
+from src.database import Database
 from .attendance.scheduler import Scheduler
 from .cogs import NotificationCog, AttendanceCog
 from config import Config

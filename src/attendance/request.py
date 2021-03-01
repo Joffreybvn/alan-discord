@@ -1,5 +1,6 @@
 
 import aiohttp
+from typing import Tuple, Union
 
 from src.attendance.enums import Locations, Periods
 
@@ -31,7 +32,7 @@ class AttendanceRequest:
             }
         }
 
-    async def send(self):
+    async def send(self) -> Tuple[bool, Union[dict, None]]:
 
         headers = {"Authorization": f"Bearer {self.token}"}
 
@@ -43,9 +44,14 @@ class AttendanceRequest:
 
                     try:
                         if body['data']['recordAttendanceTime']:
-                            return True
+                            return True, None
 
-                    except KeyError:
-                        pass
+                    except Exception as error:
+                        return False, body
 
-        return False
+                elif body := await response.json():
+                    return False, body
+                else:
+                    return False, {'status': response.status}
+
+        return False, None

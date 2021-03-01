@@ -7,18 +7,18 @@ from discord.ext.commands import Bot
 from discord.ext.commands.context import Context
 
 from config import config
-from src import Database
+from src.database import Database
 from src.attendance.enums import Locations
 from src.attendance import AttendanceRequest
-from src.utils import Emoji, mention_to_id
+from src.utils import Emoji
 
 
 class AttendanceCog(commands.Cog):
 
     def __init__(self, bot: Bot, database: Database):
 
-        self.bot = bot
-        self.db = database
+        self.bot: Bot = bot
+        self.db: Database = database
 
     @commands.command(name="token", pass_context=True)
     async def add_token(self, context: Context, token: str):
@@ -34,7 +34,7 @@ class AttendanceCog(commands.Cog):
         if len(token) > 1:
 
             # Update the database
-            self.db.update({'_id': mention}, becode_token=token)
+            self.db.upsert_user(user_id=mention, becode_token=token)
             await context.send(f"{mention}, your token has been added")
 
         else:
@@ -69,7 +69,8 @@ class AttendanceCog(commands.Cog):
                 if token := self.db.get_token(mention):
 
                     # Send an attendance request to Becode
-                    if await AttendanceRequest(messages[reaction.message.id], location, token).send():
+                    status, message = await AttendanceRequest(messages[reaction.message.id], location, token).send()
+                    if status:
 
                         print(f"[!] Attendance was correctly send for {mention}.")
                         await user.send(f"{mention} J'ai bien pointé pour toi sur Becode !")
@@ -77,6 +78,9 @@ class AttendanceCog(commands.Cog):
                     else:
                         print(f"[!] Attendance was NOT correctly send for {mention}.")
                         await user.send(f"{mention} OUPS ! Une **erreur** s'est produite... Passe par https://my.becode.org pour pointer.")
+
+                        if message:
+                            await user.send(str(message))
 
                 else:
                     print(f"[!] Missing token for {mention}.")

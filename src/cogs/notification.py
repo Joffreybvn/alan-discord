@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands.context import Context
 
-from src import Database
+from src.database import Database
 
 
 class NotificationCog(commands.Cog):
@@ -26,7 +26,7 @@ class NotificationCog(commands.Cog):
 
         # Update the database
         mention: str = context.message.author.mention
-        self.db.update({'_id': mention}, send_notification=True)
+        self.db.upsert_user(user_id=mention, send_notification=True)
 
         # Send a confirmation to user
         await context.send(f"{mention} You will now receive notifications for attendances, meetings and breaks.")
@@ -44,7 +44,7 @@ class NotificationCog(commands.Cog):
 
         # Update the database
         mention: str = context.message.author.mention
-        self.db.update({'_id': mention}, send_notification=False)
+        self.db.upsert_user(user_id=mention, send_notification=False)
 
         # Log and send a confirmation to user
         await context.send(f"{mention} You won't receive notifications anymore")
