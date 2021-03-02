@@ -22,7 +22,7 @@ class AdministrationCog(commands.Cog):
 
         if context.author.id in config.OPERATORS:
 
-            # Check the channel type is correct
+            # Check if the channel type is correct
             if channel_type in config.CHANNEL_TYPES:
 
                 # Check if the channel is correct
@@ -43,7 +43,7 @@ class AdministrationCog(commands.Cog):
 
         if context.author.id in config.OPERATORS:
 
-            # Check the channel type is correct
+            # Check if the channel type is correct
             if channel_type in config.CHANNEL_TYPES:
 
                 # Remove the channel

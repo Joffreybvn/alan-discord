@@ -80,7 +80,7 @@ class AttendanceMessage:
         async def display():
             nonlocal self
 
-            for channel_id in config.CHANNEL_ATTENDANCE:
+            for channel_id in self.database.get_channels('attendance'):
                 channel: TextChannel = self.client.get_channel(channel_id)
 
                 # Send the message with reactions

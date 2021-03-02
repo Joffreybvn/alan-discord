@@ -64,7 +64,7 @@ class Bot(commands.Bot):
         """
 
         # Consider message send only in whitelisted channels or in private message
-        if type(message.channel) != DMChannel and message.channel.id not in config.CHANNEL_WHITELIST:
+        if type(message.channel) != DMChannel and message.channel.id not in database.get_channels('whitelist'):
             return
 
         # Don't respond to ourselves

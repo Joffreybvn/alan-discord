@@ -65,7 +65,7 @@ class Database:
 
         channels = Channel.by_id(channel_type)
 
-        # Do nothing if the channels doesn't exists yet
+        # Do nothing if the channels doesn't exists
         if channels is None:
             return
 
@@ -75,6 +75,19 @@ class Database:
 
         # Upsert it to the database
         channels.upsert()
+
+    @staticmethod
+    def get_channels(channel_type: str) -> List[int]:
+        """Return a list of channel from a given channel_type."""
+
+        # Get the channels
+        channels = Channel.by_id(channel_type)
+
+        # Return an empty list if the channel type doesn't exists yet
+        if channels is None:
+            return []
+
+        return channels.channels
 
     # USER related queries
     # -------------------------------------------------------------------------
