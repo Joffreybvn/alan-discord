@@ -12,7 +12,7 @@ from src.database import Database
 from src.utils import Emoji, mention_to_id
 from src.attendance.enums import Periods
 
-# Create the apscheduler and set the timezone.
+# Create the scheduler and set the timezone.
 scheduler = AsyncIOScheduler()
 tz = timezone('Europe/Brussels')
 
@@ -55,7 +55,7 @@ class AttendanceMessage:
 
         return embed
 
-    def __send_attendance_message(self, context: Union[TextChannel, User]) -> Message:
+    async def __send_attendance_message(self, context: Union[TextChannel, User]) -> Message:
         """
         Send an attendance message into a TextChannel or in Direct Message
         to a user, and append the reactions. Return the id of the send message.
@@ -84,7 +84,7 @@ class AttendanceMessage:
                 channel: TextChannel = self.client.get_channel(channel_id)
 
                 # Send the message with reactions
-                message: Message = self.__send_attendance_message(channel)
+                message: Message = await self.__send_attendance_message(channel)
 
                 # Save the message to later detect clicks ont reactions
                 config.ATTENDANCE_MESSAGES.add(self.time, channel_id, message.id)
@@ -96,7 +96,7 @@ class AttendanceMessage:
                 user: User = await self.client.fetch_user(mention_to_id(user_id))
 
                 # Send the message with reactions
-                message: Message = self.__send_attendance_message(user)
+                message: Message = await self.__send_attendance_message(user)
                 channel: DMChannel = message.channel
 
                 # Save the message to later detect clicks ont reactions

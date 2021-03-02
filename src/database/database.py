@@ -17,21 +17,24 @@ class Database:
         User._db = "discord"
 
     @staticmethod
-    def upsert_user(user_id: str, send_notification: bool = False, becode_token: str = None):
+    def upsert_user(user_id: str, **kwargs):
         """
         Update or Insert a user to the database.
 
         :param user_id: The user to add to the database.
-        :param send_notification:
-        :param becode_token:
         """
 
-        # Create a User object
-        user = User(
-            _id=user_id,
-            send_notification=send_notification,
-            becode_token=becode_token
-        )
+        document = dict(_id=user_id)
+
+        # Update "send_notification" if provided
+        if 'send_notification' in kwargs:
+            document['send_notification'] = kwargs['send_notification']
+
+        # Update "becode_token" if provided
+        if 'becode_token' in kwargs:
+            document['becode_token'] = kwargs['becode_token']
+
+        user = User(**document)
 
         # Upsert it to the database
         user.upsert()

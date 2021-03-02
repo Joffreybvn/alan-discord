@@ -1,7 +1,5 @@
 
-from typing import Union
-
-from discord import Reaction, User, Member
+from discord import User, RawReactionActionEvent, PartialEmoji
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands.context import Context
@@ -41,47 +39,57 @@ class AttendanceCog(commands.Cog):
             await context.send(f"{mention}, your token is not valid")
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: Reaction, user: Union[User, Member]):
+    async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         """Event triggered when a user click a reaction to send an attendance to Becode."""
 
-        # Get all attendance message posted
-        messages = config.ATTENDANCE_MESSAGES.get_by_messages()
+        # Get the user object
+        user: User = await self.bot.fetch_user(payload.user_id)
 
-        # Check when a user add a reaction
-        if reaction.message.id in messages.keys() and not user.bot:
-            location = None
+        # If the reaction is added by a human
+        if not user.bot:
 
-            # Emoji: House
-            if str(reaction.emoji == Emoji.HOUSE.value):
-                location = Locations.HOME
+            # Get all attendance message posted
+            messages = config.ATTENDANCE_MESSAGES.get_by_messages()
 
-            # Emoji: City
-            elif str(reaction.emoji == Emoji.CITY.value):
-                location = Locations.BECODE
+            # Get the emoji and message id
+            emoji: PartialEmoji = payload.emoji
+            message_id: int = payload.message_id
 
-            if location:
-                print("[!] User added reaction.")
+            # Check when a user add a reaction
+            if message_id in messages.keys():
+                location = None
 
-                # Get the mention
-                mention: str = user.mention
+                # Emoji: House
+                if str(emoji == Emoji.HOUSE.value):
+                    location = Locations.HOME
 
-                # Retrieve the token and check if it's not None
-                if token := self.db.get_token(mention):
+                # Emoji: City
+                elif str(emoji == Emoji.CITY.value):
+                    location = Locations.BECODE
 
-                    # Send an attendance request to Becode
-                    status, message = await AttendanceRequest(messages[reaction.message.id], location, token).send()
-                    if status:
+                if location:
+                    print("[!] User added reaction.")
 
-                        print(f"[!] Attendance was correctly send for {mention}.")
-                        await user.send(f"{mention} J'ai bien pointé pour toi sur Becode !")
+                    # Get the mention
+                    mention: str = user.mention
+
+                    # Retrieve the token and check if it's not None
+                    if token := self.db.get_token(mention):
+
+                        # Send an attendance request to Becode
+                        status, message = await AttendanceRequest(messages[message_id], location, token).send()
+                        if status:
+
+                            print(f"[!] Attendance was correctly send for {mention}.")
+                            await user.send(f"{mention} J'ai bien pointé pour toi sur Becode !")
+
+                        else:
+                            print(f"[!] Attendance was NOT correctly send for {mention}.")
+                            await user.send(f"{mention} OUPS ! Une **erreur** s'est produite... Passe par https://my.becode.org pour pointer.")
+
+                            if message:
+                                await user.send(str(message))
 
                     else:
-                        print(f"[!] Attendance was NOT correctly send for {mention}.")
-                        await user.send(f"{mention} OUPS ! Une **erreur** s'est produite... Passe par https://my.becode.org pour pointer.")
-
-                        if message:
-                            await user.send(str(message))
-
-                else:
-                    print(f"[!] Missing token for {mention}.")
-                    await user.send(f"{mention} OUPS ! Une **erreur** s'est produite: Je n'ai pas trouvé ton token... Ajoute un token avec la commande **!token**.")
+                        print(f"[!] Missing token for {mention}.")
+                        await user.send(f"{mention} OUPS ! Une **erreur** s'est produite: Je n'ai pas trouvé ton token... Ajoute un token avec la commande **!token**.")

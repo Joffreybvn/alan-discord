@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from discord import DMChannel
+from discord import DMChannel, Intents
 from discord.ext import commands
 from discord.message import Message
 from botbuilder_discord import OfflineConnector
@@ -62,8 +62,7 @@ class Bot(commands.Bot):
         """
 
         # Consider message send only in whitelisted channels or in private message
-        if type(message.channel) != DMChannel \
-                and message.channel.id not in config.CHANNEL_WHITELIST:
+        if type(message.channel) != DMChannel and message.channel.id not in config.CHANNEL_WHITELIST:
             return
 
         # Don't respond to ourselves
