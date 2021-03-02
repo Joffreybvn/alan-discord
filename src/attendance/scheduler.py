@@ -10,13 +10,13 @@ class Scheduler:
     def __init__(self, client: Client, database: Database):
 
         # Morning attendances
-        AttendanceMessage(client, database, Periods.MORNING, (8, 50), (9, 00))
+        AttendanceMessage(client, database, Periods.MORNING, (8, 50), (12, 20))
 
         # Lunch attendances
         AttendanceMessage(client, database, Periods.LUNCH, (12, 30), (13, 30))
 
         # Noon attendances
-        AttendanceMessage(client, database, Periods.NOON, (13, 20), (13, 30))
+        AttendanceMessage(client, database, Periods.NOON, (13, 20), (16, 50))
 
         # Evening attendances
         AttendanceMessage(client, database, Periods.EVENING, (17, 00), (21, 00))

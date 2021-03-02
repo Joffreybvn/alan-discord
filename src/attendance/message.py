@@ -40,7 +40,7 @@ class AttendanceMessage:
         self.schedule()
 
     @staticmethod
-    def get_embed() -> Embed:
+    def get_embed(hide_hour: int, hide_minute: int) -> Embed:
 
         embed = Embed(
             title="My BeCode",
@@ -53,10 +53,12 @@ class AttendanceMessage:
             colour=5747135
         )
         embed.set_thumbnail(url="https://i.imgur.com/ixU2HdV.gif")  # https://i.imgur.com/cg4xd66.png
+        embed.set_footer(text=f"This message will disappear @ {hide_hour}:{hide_minute:02d}")
 
         return embed
 
-    async def __send_attendance_message(self, context: Union[TextChannel, User]) -> Union[Message, False]:
+    async def __send_attendance_message(self, context: Union[TextChannel, User],
+            hide_hour: int, hide_minute: int) -> Union[Message, bool]:
         """
         Send an attendance message into a TextChannel or in Direct Message
         to a user, and append the reactions. Return the id of the send message.
@@ -64,7 +66,7 @@ class AttendanceMessage:
 
         try:
             # Send the message
-            message: Message = await context.send(self.text, embed=self.get_embed())
+            message: Message = await context.send(self.text, embed=self.get_embed(hide_hour, hide_minute))
 
             # Append the reactions
             await message.add_reaction(emoji=Emoji.HOUSE.value)
@@ -80,9 +82,10 @@ class AttendanceMessage:
 
     def schedule(self):
 
-        # Display
         display_hour, display_minute = self.display_time
+        hide_hour, hide_minute = self.hide_time
 
+        # Display
         @scheduler.scheduled_job('cron', day_of_week=self.days, hour=display_hour, minute=display_minute, timezone=tz)
         async def display():
             nonlocal self
@@ -91,7 +94,7 @@ class AttendanceMessage:
                 channel: TextChannel = self.client.get_channel(channel_id)
 
                 # Send the message with reactions
-                if message := await self.__send_attendance_message(channel):
+                if message := await self.__send_attendance_message(channel, hide_hour, hide_minute):
 
                     # Save the message to later detect clicks ont reactions
                     config.ATTENDANCE_MESSAGES.add(self.time, channel_id, message.id)
@@ -103,7 +106,7 @@ class AttendanceMessage:
                 user: User = await self.client.fetch_user(mention_to_id(user_id))
 
                 # Send the message with reactions
-                if message := await self.__send_attendance_message(user):
+                if message := await self.__send_attendance_message(user, hide_hour, hide_minute):
                     channel: DMChannel = message.channel
 
                     # Save the message to later detect clicks ont reactions
@@ -113,8 +116,6 @@ class AttendanceMessage:
             print(f"[i] Display direct message attendance - Triggered @ {datetime.now()}")
 
         # Hide
-        hide_hour, hide_minute = self.hide_time
-
         @scheduler.scheduled_job('cron', day_of_week=self.days, hour=hide_hour, minute=hide_minute, timezone=tz)
         async def hide():
             nonlocal self
