@@ -5,6 +5,7 @@ from pytz import timezone
 from typing import Union
 
 from discord import Client, TextChannel, DMChannel, User, Embed, Message, PartialMessage
+from discord.errors import Forbidden
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from config import config
@@ -55,21 +56,27 @@ class AttendanceMessage:
 
         return embed
 
-    async def __send_attendance_message(self, context: Union[TextChannel, User]) -> Message:
+    async def __send_attendance_message(self, context: Union[TextChannel, User]) -> Union[Message, False]:
         """
         Send an attendance message into a TextChannel or in Direct Message
         to a user, and append the reactions. Return the id of the send message.
         """
 
-        # Send the message
-        message: Message = await context.send(self.text, embed=self.get_embed())
+        try:
+            # Send the message
+            message: Message = await context.send(self.text, embed=self.get_embed())
 
-        # Append the reactions
-        await message.add_reaction(emoji=Emoji.HOUSE.value)
-        await message.add_reaction(emoji=Emoji.CITY.value)
+            # Append the reactions
+            await message.add_reaction(emoji=Emoji.HOUSE.value)
+            await message.add_reaction(emoji=Emoji.CITY.value)
 
-        # Return the message
-        return message
+        except Forbidden as error:
+            print(f"""[!] Forbidden - Unable to send attendance message to {context}.
+            Maybe the user is not on the same server, or has disabled Direct Message.""")
+            return False
+
+        else:
+            return message
 
     def schedule(self):
 
@@ -84,10 +91,10 @@ class AttendanceMessage:
                 channel: TextChannel = self.client.get_channel(channel_id)
 
                 # Send the message with reactions
-                message: Message = await self.__send_attendance_message(channel)
+                if message := await self.__send_attendance_message(channel):
 
-                # Save the message to later detect clicks ont reactions
-                config.ATTENDANCE_MESSAGES.add(self.time, channel_id, message.id)
+                    # Save the message to later detect clicks ont reactions
+                    config.ATTENDANCE_MESSAGES.add(self.time, channel_id, message.id)
 
             # Log: job triggered
             print(f"[i] Display server attendance - Triggered @ {datetime.now()}")
@@ -96,11 +103,11 @@ class AttendanceMessage:
                 user: User = await self.client.fetch_user(mention_to_id(user_id))
 
                 # Send the message with reactions
-                message: Message = await self.__send_attendance_message(user)
-                channel: DMChannel = message.channel
+                if message := await self.__send_attendance_message(user):
+                    channel: DMChannel = message.channel
 
-                # Save the message to later detect clicks ont reactions
-                config.ATTENDANCE_MESSAGES.add(self.time, channel.id, message.id)
+                    # Save the message to later detect clicks ont reactions
+                    config.ATTENDANCE_MESSAGES.add(self.time, channel.id, message.id)
 
             # Log: job triggered
             print(f"[i] Display direct message attendance - Triggered @ {datetime.now()}")
