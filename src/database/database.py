@@ -22,12 +22,72 @@ class Database:
         Watch._db = db_name
         Channel._db = db_name
 
+    # ADMINISTRATION related queries
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def add_channel(channel_type: str, channel_id: int):
+        """
+        Add a channel id to a channel list. Create the channel list if it
+        doesn't exists yet.
+
+        :param channel_type: The name of the channel list. See the
+            "CHANNEL_TYPES" in the config files for references.
+        :param channel_id: The id of the channel to save.
+        """
+
+        channels = Channel.by_id(channel_type)
+
+        # Create the channel list if it doesn't exists yet
+        if channels is None:
+
+            channels = Channel(
+                _id=channel_type,
+                channels=[]
+            )
+
+        # Add the new channel id
+        if channel_id not in channels.channels:
+            channels.channels.append(channel_id)
+
+        # Upsert it to the database
+        channels.upsert()
+
+    @staticmethod
+    def remove_channel(channel_type: str, channel_id: int):
+        """
+        Remove a channel id from a channel list.
+
+        :param channel_type: The name of the channel list. See the
+            "CHANNEL_TYPES" in the config files for references.
+        :param channel_id: The id of the channel to remove.
+        """
+
+        channels = Channel.by_id(channel_type)
+
+        # Do nothing if the channels doesn't exists yet
+        if channels is None:
+            return
+
+        # Remove the channel id
+        if channel_id in channels.channels:
+            channels.channels.remove(channel_id)
+
+        # Upsert it to the database
+        channels.upsert()
+
+    # USER related queries
+    # -------------------------------------------------------------------------
+
     @staticmethod
     def upsert_user(user_id: str, **kwargs):
         """
         Update or Insert a user to the database.
 
         :param user_id: The user to add to the database.
+        :param kwargs:
+            - send_notification (bool)
+            - becode_token (str)
         """
 
         document = dict(_id=user_id)

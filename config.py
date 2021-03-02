@@ -23,6 +23,8 @@ class Config:
         self.MY_BECODE_URL = "https://my.becode.org"
 
         # Channels where the bot listen to messages and publish attendance
+        # self.OPERATORS = [int(i) for i in environ.get('OPERATORS').split(",")]
+        self.CHANNEL_TYPES = ["whitelist", "attendance", "watch"]
         self.CHANNEL_WHITELIST = [int(i) for i in environ.get('CHANNEL_WHITELIST').split(",")]
         self.CHANNEL_ATTENDANCE = [int(i) for i in environ.get('CHANNEL_ATTENDANCE').split(",")]
 

@@ -7,7 +7,7 @@ from botbuilder_discord import OfflineConnector
 
 from src.database import Database
 from .attendance.scheduler import Scheduler
-from .cogs import NotificationCog, AttendanceCog, WatchCog
+from .cogs import NotificationCog, AttendanceCog, WatchCog, AdministrationCog
 from config import Config
 
 config = Config()
@@ -38,6 +38,7 @@ class Bot(commands.Bot):
         self.add_cog(NotificationCog(self, database))
         self.add_cog(AttendanceCog(self, database))
         self.add_cog(WatchCog(self, database))
+        self.add_cog(AdministrationCog(self, database))
 
     def run(self):
         """
