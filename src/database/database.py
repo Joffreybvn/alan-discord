@@ -4,17 +4,23 @@ from typing import List, Union
 from pymongo import MongoClient
 from mongoframes.queries import Q
 
-from . import User
+from . import User, Watch, Channel
 
 
 class Database:
 
     def __init__(self, db_host: str, db_password: str):
         self.client = MongoClient(f"mongodb+srv://dbUser:{db_password}@{db_host}")
+        db_name = "discord"
 
         # Link frames to the database
         User._client = self.client
-        User._db = "discord"
+        Watch._client = self.client
+        Channel._client = self.client
+
+        User._db = db_name
+        Watch._db = db_name
+        Channel._db = db_name
 
     @staticmethod
     def upsert_user(user_id: str, **kwargs):
