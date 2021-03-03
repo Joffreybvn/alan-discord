@@ -1,8 +1,9 @@
 
 from .emojis import Emoji
-from .sanitizer import mention_to_id
+from .tools import mention_to_id, generate_uuid
 
 __all__ = [
     "Emoji",
-    "mention_to_id"
+    "mention_to_id",
+    "generate_uuid"
 ]

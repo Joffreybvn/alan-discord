@@ -22,6 +22,9 @@ class AdministrationCog(commands.Cog):
 
         if context.author.id in config.OPERATORS:
 
+            # Save the action to the history
+            self.bot.history[context.message.id] = True
+
             # Check if the channel type is correct
             if channel_type in config.CHANNEL_TYPES:
 
@@ -42,6 +45,9 @@ class AdministrationCog(commands.Cog):
     async def remove_channel(self, context: Context, channel_type: str, channel_id: int):
 
         if context.author.id in config.OPERATORS:
+
+            # Save the action to the history
+            self.bot.history[context.message.id] = True
 
             # Check if the channel type is correct
             if channel_type in config.CHANNEL_TYPES:

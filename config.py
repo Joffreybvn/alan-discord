@@ -19,8 +19,9 @@ class Config:
         self.BOT_CALLBACK_PORT = int(environ.get('BOT_CALLBACK_PORT'))
         self.BOT_CALLBACK_HOST = environ.get('BOT_CALLBACK_HOST')
 
-        # My BeCode URL
+        # Website URL
         self.MY_BECODE_URL = "https://my.becode.org"
+        self.TURINGBOT_URL = "https://turingbot.ml"
 
         # Channels where the bot listen to messages and publish attendance
         self.OPERATORS = [int(i) for i in environ.get('OPERATORS').split(",")]

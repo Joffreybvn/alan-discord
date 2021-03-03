@@ -103,17 +103,9 @@ class Database:
             - becode_token (str)
         """
 
-        document = dict(_id=user_id)
-
-        # Update "send_notification" if provided
-        if 'send_notification' in kwargs:
-            document['send_notification'] = kwargs['send_notification']
-
-        # Update "becode_token" if provided
-        if 'becode_token' in kwargs:
-            document['becode_token'] = kwargs['becode_token']
-
-        user = User(**document)
+        # Create a User object with the given arguments
+        kwargs['_id'] = user_id
+        user = User(**kwargs)
 
         # Upsert it to the database
         user.upsert()
