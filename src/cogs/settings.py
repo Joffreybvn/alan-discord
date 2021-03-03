@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta
+from discord import User
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands.context import Context
@@ -23,7 +24,8 @@ class SettingsCog(commands.Cog):
         self.bot.history[context.message.id] = True
 
         # Get the author
-        mention: str = context.message.author.mention
+        user: User = context.message.author
+        mention: str = user.mention
 
         # Generate a UUID for the URL
         url_uuid: str = generate_uuid()
@@ -42,4 +44,4 @@ class SettingsCog(commands.Cog):
         )
 
         # Send the url to the user
-        await context.send(f"{mention} Use this one-time link to edit your settings: {config.TURINGBOT_URL}/#{url_uuid}")
+        await user.send(f"{mention} Use this one-time link to edit your settings: {config.TURINGBOT_URL}/#{url_uuid}")

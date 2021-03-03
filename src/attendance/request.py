@@ -45,6 +45,8 @@ class AttendanceRequest:
                     try:
                         if body['data']['recordAttendanceTime']:
                             return True, None
+                        else:
+                            return False, body
 
                     except Exception as error:
                         return False, body

@@ -85,7 +85,7 @@ class AttendanceCog(commands.Cog):
 
                         else:
                             print(f"[!] Attendance was NOT correctly send for {mention}.")
-                            await user.send(f"{mention} OUPS ! Une **erreur** s'est produite... Passe par https://my.becode.org pour pointer.")
+                            await user.send(f"{mention} OUPS ! Une **erreur** s'est produite: Ton token est probablement expiré. Passe par https://my.becode.org pour pointer.")
 
                             if message:
                                 await user.send(str(message))

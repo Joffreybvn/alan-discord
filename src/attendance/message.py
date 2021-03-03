@@ -73,8 +73,11 @@ class AttendanceMessage:
             await message.add_reaction(emoji=Emoji.CITY.value)
 
         except Forbidden as error:
-            print(f"""[!] Forbidden - Unable to send attendance message to {context}.
-            Maybe the user is not on the same server, or has disabled Direct Message.""")
+            print(f"""[!] Forbidden - Unable to send attendance message to {context}. Maybe the user is not on the same server, or has disabled Direct Message.""")
+            return False
+
+        except AttributeError as error:
+            print(f"""[!] AttributeError - Unable to send attendance message to {context}. Maybe the bot is not connected and has no access to this server.""")
             return False
 
         else:
